@@ -13,14 +13,20 @@ You can check if the tests pass by running `make assignment-1` in the terminal.
 You can follow the `TODO ASSIGNMENT-1` comments to find the places where you need to implement something.
 """
 
+import re
+
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.tokenize import TweetTokenizer
+
 
 class TweetProcessor:
-    # TODO ASSIGNMENT-1: Add a `stemmer` attribute to the class
+    def __init__(self):
+        self.tknzr = TweetTokenizer(
+            preserve_case=False, reduce_len=True, strip_handles=True
+        )
 
-    # TODO ASSIGNMENT-1: Add a `tokenizer` attribute to the class
-    #  - text should be lowercased
-    #  - handles should be stripped
-    #  - the length should be reduced for repeated characters
+        self.stemmer = PorterStemmer()
 
     @staticmethod
     def remove_urls(tweet: str) -> str:
@@ -32,8 +38,10 @@ class TweetProcessor:
         Returns:
             str: the tweet without urls
         """
-        # TODO ASSIGNMENT-1: implement this function
-        raise NotImplementedError("This function needs to be implemented.")
+
+        url_pattern = r"http[s]?://\S+"
+
+        return re.sub(url_pattern, "", tweet)
 
     @staticmethod
     def remove_hashtags(tweet: str) -> str:
@@ -46,8 +54,10 @@ class TweetProcessor:
         Returns:
             str: the tweet without hashtags symbols
         """
-        # TODO ASSIGNMENT-1: implement this function
-        raise NotImplementedError("This function needs to be implemented.")
+
+        hashtag_pattern = r"#"
+
+        return re.sub(hashtag_pattern, "", tweet)
 
     def tokenize(self, tweet: str) -> list[str]:
         """Tokenizes a tweet using the nltk TweetTokenizer.
@@ -59,8 +69,8 @@ class TweetProcessor:
         Returns:
             list[str]: the tokenized tweet
         """
-        # TODO ASSIGNMENT-1: implement this function
-        raise NotImplementedError("This function needs to be implemented.")
+
+        return self.tknzr.tokenize(tweet)
 
     @staticmethod
     def remove_stopwords(tokens: list[str]) -> list[str]:
@@ -74,21 +84,35 @@ class TweetProcessor:
         Returns:
             list[str]: the tokenized tweet without stopwords
         """
-        # TODO ASSIGNMENT-1: implement this function
-        raise NotImplementedError("This function needs to be implemented.")
+
+        stop_words = set(stopwords.words("english"))
+
+        return [token for token in tokens if token not in stop_words]
 
     @staticmethod
     def remove_punctuation(tokens: list[str]) -> list[str]:
-        """Removes punctuation from a tweet.
+        """Removes standalone punctuation from a tweet but keeps emojis, mentions, hashtags, and common emoticons.
 
         Args:
             tokens (list[str]): the tokenized tweet
 
         Returns:
-            list[str]: the tokenized tweet without punctuation
+            list[str]: the tokenized tweet without standalone punctuation
         """
-        # TODO ASSIGNMENT-1: implement this function
-        raise NotImplementedError("This function needs to be implemented.")
+        # Define a regex pattern to match standalone punctuation (but ignore emoticons and ellipses)
+        punctuation_pattern = re.compile(r"^[!\"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]+$")
+
+        # Define a regex pattern for common emoticons and ellipses to preserve them
+        emoticon_pattern = re.compile(
+            r"(\.\.\.|:\)|:\(|:D|;D|:\*|:\||:P|;P|<3|:\]|:\[|:\}|\(:|\);|\^_\^|:-\))"
+        )
+
+        # Filter out tokens that are only punctuation, but keep tokens matching emoticons or ellipses
+        return [
+            token
+            for token in tokens
+            if not punctuation_pattern.match(token) or emoticon_pattern.match(token)
+        ]
 
     def stem(self, tokens: list[str]) -> list[str]:
         """Stems the tokens of a tweet using the nltk PorterStemmer.
@@ -99,8 +123,7 @@ class TweetProcessor:
         Returns:
             list[str]: the tokenized tweet with stemmed tokens
         """
-        # TODO ASSIGNMENT-1: implement this function
-        raise NotImplementedError("This function needs to be implemented.")
+        return [self.stemmer.stem(token) for token in tokens]
 
     def process_tweet(self, tweet: str) -> list[str]:
         """Processes a tweet by removing urls, hashtags, stopwords, punctuation, and stemming the tokens.
@@ -111,5 +134,12 @@ class TweetProcessor:
         Returns:
             list[str]: the processed tweet
         """
-        # TODO ASSIGNMENT-1: implement this function
-        raise NotImplementedError("This function needs to be implemented.")
+
+        tweet_no_url = self.remove_urls(tweet)
+        tweet_no_hashtag = self.remove_hashtags(tweet_no_url)
+        tokens = self.tokenize(tweet_no_hashtag)
+        tokens_no_stopword = self.remove_stopwords(tokens)
+        tokens_no_punctation = self.remove_punctuation(tokens_no_stopword)
+        tokens_stemmed = self.stem(tokens_no_punctation)
+
+        return tokens_stemmed
