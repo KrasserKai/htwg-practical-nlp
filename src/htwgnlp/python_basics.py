@@ -133,7 +133,7 @@ def print_product_price(product: str, price: int | float) -> str:
 
     Example:
         >>> print_product_price("banana", 1.5)
-        'The price of a banana is 1.50 USD.'
+        'The price of the product "banana" is 1.50 USD.'
     """
 
     if price <= 0:
