@@ -49,8 +49,11 @@ class CountVectorizer:
             labels (list[str]): a list of corresponding class labels
 
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        for tweet, label in zip(tweets, labels):
+            for word in tweet:
+                self.word_frequencies[
+                    (word, label.item() if isinstance(label, np.ndarray) else label)
+                ] += 1
 
     def get_features(self, tweet: list[str]) -> np.ndarray:
         """Returns a feature vector for a given tweet.
@@ -64,5 +67,16 @@ class CountVectorizer:
             np.ndarray: the feature vector for the tweet as a row vector
         """
 
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        pos = 0  # Sum of frequencies in the positive class
+        neg = 0  # Sum of frequencies in the negative class
+
+        for word in tweet:
+            pos += self.word_frequencies.get(
+                (word, 1), 0
+            )  # Frequency of the word in the positive class
+            neg += self.word_frequencies.get(
+                (word, 0), 0
+            )  # Frequency of the word in the negative class
+
+        # Feature vector: [1, pos, neg]
+        return np.array([1, pos, neg])
