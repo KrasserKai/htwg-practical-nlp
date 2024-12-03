@@ -27,8 +27,7 @@ class CountVectorizer:
         This means that if a key is not found in the dictionary, the value is 0 and no KeyError exception is raised.
 
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        self.word_frequencies = defaultdict(int)
 
     def build_word_frequencies(
         self, tweets: list[list[str]], labels: np.ndarray
