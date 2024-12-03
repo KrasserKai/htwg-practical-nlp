@@ -14,6 +14,7 @@ You can follow the `TODO ASSIGNMENT-1` comments to find the places where you nee
 """
 
 import re
+import string
 
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
@@ -99,20 +100,11 @@ class TweetProcessor:
         Returns:
             list[str]: the tokenized tweet without standalone punctuation
         """
-        # Define a regex pattern to match standalone punctuation (but ignore emoticons and ellipses)
-        punctuation_pattern = re.compile(r"^[!\"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]+$")
+        # Create a set of punctuation for fast lookup
+        punctuation_set = set(string.punctuation)
 
-        # Define a regex pattern for common emoticons and ellipses to preserve them
-        emoticon_pattern = re.compile(
-            r"(\.\.\.|:\)|:\(|:D|;D|:\*|:\||:P|;P|<3|:\]|:\[|:\}|\(:|\);|\^_\^|:-\))"
-        )
-
-        # Filter out tokens that are only punctuation, but keep tokens matching emoticons or ellipses
-        return [
-            token
-            for token in tokens
-            if not punctuation_pattern.match(token) or emoticon_pattern.match(token)
-        ]
+        # Filter out standalone punctuation tokens
+        return [word for word in tokens if word not in punctuation_set]
 
     def stem(self, tokens: list[str]) -> list[str]:
         """Stems the tokens of a tweet using the nltk PorterStemmer.

@@ -139,7 +139,7 @@ def print_product_price(product: str, price: int | float) -> str:
     if price <= 0:
         raise ValueError("The price must be a positive number.")
 
-    return f"The price of {product} is {price:.2f} USD."
+    return f'The price of the product "{product}" is {price:.2f} USD.'
 
 
 def count_purchases(purchases: list[str]) -> Counter:
