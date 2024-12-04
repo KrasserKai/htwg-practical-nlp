@@ -36,8 +36,10 @@ class LogisticRegression:
             learning_rate (float, optional): the learning rate of the model. Defaults to 1e-9.
             n_iter (int, optional): the number of iterations for the training. Defaults to 1500.
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        self.learning_rate = learning_rate
+        self.n_iter = n_iter
+        self.theta: np.ndarray = None
+        self.cost: np.ndarray = None
 
     def _initialize_weights(self, n_features: int) -> None:
         """Initialize the weights of the model.
@@ -47,8 +49,7 @@ class LogisticRegression:
         Args:
             n_features (int): the number of features of the model
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        self.theta = np.zeros((n_features, 1))
 
     def _sigmoid(self, z: np.ndarray | int | float) -> np.ndarray | float:
         """Compute the sigmoid of z.
@@ -61,8 +62,7 @@ class LogisticRegression:
         Returns:
             np.ndarray | float: the sigmoid of the logit, i.e. a probability value
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        return 1 / (1 + np.exp(-z))
 
     def _cost_function(
         self,
@@ -77,8 +77,10 @@ class LogisticRegression:
             y (np.ndarray): the labels of the training data in shape (m, 1), where m is the number of samples.
             h (np.ndarray): the predictions of the model as obtained from the sigmoid function in shape (m, 1), where m is the number of samples.
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        m = y.shape[0]
+        epsilon = 1e-15
+        h = np.clip(h, epsilon, 1 - epsilon)
+        self.cost = -(1 / m) * np.sum(y * np.log(h) + (1 - y) * np.log(1 - h))
 
     def _update_weights(
         self,
@@ -95,8 +97,9 @@ class LogisticRegression:
             y (np.ndarray): the labels of the training data in shape (m, 1), where m is the number of samples.
             h (np.ndarray): the predictions of the model as obtained from the sigmoid function in shape (m, 1), where m is the number of samples.
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        m = y.shape[0]
+        gradient = (1 / m) * np.dot(X.T, (h - y))
+        self.theta -= self.learning_rate * gradient
 
     def _gradient_descent(
         self, X: np.ndarray, y: np.ndarray
@@ -121,8 +124,18 @@ class LogisticRegression:
             np.ndarray: the minimized cost of the model after `n_iter` iterations
 
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        n_features = X.shape[1]
+        self._initialize_weights(n_features=n_features)
+
+        for _ in range(self.n_iter):
+            z = np.dot(X, self.theta)
+            h = self._sigmoid(z)
+
+            self._cost_function(y, h)
+
+            self._update_weights(X, y, h)
+
+        return self.theta, self.cost
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Performs a gradient descent with training data X and labels y.
@@ -143,8 +156,14 @@ class LogisticRegression:
             np.ndarray: the weights `theta` of the model
             np.ndarray: the minimized cost of the model after `n_iter` iterations
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        assert (
+            X.shape[0] == y.shape[0]
+        ), "The number of samples in X and y must be equal."
+        assert X.ndim == 2, "X must be a 2-dimensional array."
+        assert y.ndim == 2, "y must be a 2-dimensional array."
+        assert y.shape[1] == 1, "y must be a column vector."
+
+        return self._gradient_descent(X, y)
 
     def predict_prob(self, X: np.ndarray) -> np.ndarray:
         """Predict the probability for the given samples using the trained weights.
@@ -155,8 +174,16 @@ class LogisticRegression:
         Returns:
             np.ndarray: the predicted probabilities as a value between 0 and 1 for the given samples in shape (m, 1), where m is the number of samples.
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        if self.theta is None:
+            raise ValueError(
+                "Model weights are not initialized. Train the model before predicting."
+            )
+
+        z = np.dot(X, self.theta)
+
+        probabilities = self._sigmoid(z)
+
+        return probabilities
 
     def predict(self, X: np.ndarray, threshold: float = 0.5) -> np.ndarray:
         """Predict the labels for the given samples using the trained weights.
@@ -169,5 +196,8 @@ class LogisticRegression:
         Returns:
             np.ndarray: the predicted labels for the given samples in shape (m, 1), where m is the number of samples.
         """
-        # TODO ASSIGNMENT-2: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        propabilities = self.predict_prob(X)
+
+        predictions = np.where(propabilities >= threshold, 1, 0)
+
+        return predictions
