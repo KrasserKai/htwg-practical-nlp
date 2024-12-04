@@ -40,8 +40,11 @@ class NaiveBayes:
         Args:
             alpha (float, optional): the smoothing parameter. Defaults to 1.0.
         """
-        # TODO ASSIGNMENT-3: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        self._alpha = alpha
+        self._word_probabilities: pd.DataFrame = None
+        self._df_freqs: pd.DataFrame = None
+        self._log_ratios: pd.Series = None
+        self._logprior: float = 0
 
     @property
     def logprior(self) -> float:
@@ -50,8 +53,7 @@ class NaiveBayes:
         Returns:
             float: the logprior
         """
-        # TODO ASSIGNMENT-3: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        return self._logprior
 
     @logprior.setter
     def logprior(self, y: np.ndarray) -> None:
@@ -62,8 +64,15 @@ class NaiveBayes:
         Args:
             y (np.ndarray): a numpy array of class labels of shape (m, 1), where m is the number of samples
         """
-        # TODO ASSIGNMENT-3: implement this method
-        raise NotImplementedError("This method needs to be implemented.")
+        # Compute counts of each class
+        class_counts = np.bincount(y.flatten())
+
+        # Ensure both classes are present
+        if len(class_counts) != 2:
+            raise ValueError("y must contain exactly two classes (e.g., 0 and 1).")
+
+        # Calculate logprior
+        self._logprior = np.log(class_counts[1] / class_counts[0])
 
     def _get_word_frequencies(self, X: list[list[str]], y: np.ndarray) -> None:
         """Computes the word frequencies per class.
