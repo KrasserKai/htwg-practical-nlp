@@ -38,8 +38,8 @@ class WordEmbeddings:
         Returns:
             np.ndarray: the embedding values as a numpy array of shape (n, d), where n is the vocabulary size and d is the number of dimensions
         """
-        if self._embeddings is not None:
-            embedding_values = self._embeddings.values()
+        if self._embeddings_df is not None:
+            embedding_values = self._embeddings_df.values
         else:
             raise ValueError("Embeddings have not been initialized.")
 
