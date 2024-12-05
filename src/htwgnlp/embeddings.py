@@ -10,6 +10,7 @@ Hints:
 """
 
 import pickle
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -27,8 +28,8 @@ class WordEmbeddings:
 
     def __init__(self) -> None:
         """Initializes the WordEmbeddings class."""
-        self._embeddings: dict[str, np.ndarray] = {}
-        self._embeddings_df: pd.DataFrame = pd.DataFrame()
+        self._embeddings: Optional[dict[str, np.ndarray]] = None
+        self._embeddings_df: Optional[pd.DataFrame] = None
 
     @property
     def embedding_values(self) -> np.ndarray:
@@ -37,7 +38,12 @@ class WordEmbeddings:
         Returns:
             np.ndarray: the embedding values as a numpy array of shape (n, d), where n is the vocabulary size and d is the number of dimensions
         """
-        return self._embeddings_df.values
+        if self._embeddings is not None:
+            embedding_values = self._embeddings.values()
+        else:
+            raise ValueError("Embeddings have not been initialized.")
+
+        return embedding_values
 
     def _load_raw_embeddings(self, path: str) -> None:
         """Loads the raw embeddings from a pickle file, and stores them in the `_embeddings` attribute.
@@ -47,7 +53,6 @@ class WordEmbeddings:
         Args:
             path (str): the path to the pickle file
         """
-
         with open(path, "rb") as file:
             self._embeddings = pickle.load(file)
 
@@ -78,6 +83,9 @@ class WordEmbeddings:
         Returns:
             np.ndarray | None: the embedding vector for the given word in the form of a numpy array of shape (d,), where d is the number of dimensions, or None if the word is not in the vocabulary
         """
+        if self._embeddings is None:
+            raise ValueError("Embeddings have not been initialized.")
+
         return self._embeddings.get(word)
 
     def euclidean_distance(self, v: np.ndarray) -> np.ndarray:
@@ -131,6 +139,12 @@ class WordEmbeddings:
         Returns:
             list[str]: the `n` most similar words to the given word
         """
+        if self._embeddings is None:
+            raise ValueError("Embeddings have not been initialized.")
+
+        if self._embeddings_df is None:
+            raise ValueError("Embeddings have not been loaded to DataFrame.")
+
         if word not in self._embeddings:
             raise AssertionError(f"The word '{word}' is not in the vocabulary.")
 
@@ -167,6 +181,12 @@ class WordEmbeddings:
         Returns:
             str: the word that is closest to the given vector `v`
         """
+        if self._embeddings is None:
+            raise ValueError("Embeddings have not been initialized.")
+
+        if self._embeddings_df is None:
+            raise ValueError("Embeddings have not been loaded to DataFrame.")
+
         if metric == "euclidean":
             distances = self.euclidean_distance(v)
             closest_word_index = np.argmin(distances)
