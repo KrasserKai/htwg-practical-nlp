@@ -1,4 +1,41 @@
+import csv
+
 import torch
+
+
+def save_metrics(train_losses, val_losses, val_accuracies, metrics_output):
+    # Save metrics to a CSV file
+    with open(metrics_output, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["Epoch", "Train Loss", "Val Loss", "Val Accuracy"])
+        for epoch, (train_loss, val_loss, val_accuracy) in enumerate(
+            zip(train_losses, val_losses, val_accuracies), 1
+        ):
+            writer.writerow([epoch, train_loss, val_loss, val_accuracy])
+
+    print(f"Metrics saved to {metrics_output}")
+
+
+def load_metrics(metrics_output):
+    # Load metrics from a CSV file
+    epochs = []
+    train_losses = []
+    val_losses = []
+    val_accuracies = []
+
+    with open(metrics_output, mode="r") as file:
+        reader = csv.reader(file)
+        next(reader)  # Skip the header row
+        for row in reader:
+            epochs.append(int(row[0]))  # Epoch
+            train_losses.append(float(row[1]))  # Train Loss
+            val_losses.append(float(row[2]))  # Validation Loss
+            val_accuracies.append(float(row[3]))  # Validation Accuracy
+
+    print(f"Metrics loaded from {metrics_output}")
+
+    # Return the metrics as lists
+    return epochs, train_losses, val_losses, val_accuracies
 
 
 def train_one_epoch(model, train_loader, criterion, optimizer, device):
@@ -21,6 +58,7 @@ def train_one_epoch(model, train_loader, criterion, optimizer, device):
         total_train_loss += loss.item()
 
     avg_train_loss = total_train_loss / len(train_loader)
+
     return avg_train_loss
 
 
@@ -74,7 +112,8 @@ def train_model(
     num_epochs,
     patience,
     early_stopping,
-    model_output,
+    output,
+    run_name,
 ):
     """Train the model with early stopping and track training history."""
     model.to(device)
@@ -85,6 +124,9 @@ def train_model(
     train_losses = []
     val_losses = []
     val_accuracies = []
+
+    model_output = f"{output}/{run_name}.pt"
+    metrics_output = f"{output}/{run_name}.csv"
 
     for epoch in range(num_epochs):
         print(f"Epoch [{epoch+1}/{num_epochs}]")
@@ -105,13 +147,15 @@ def train_model(
         best_val_loss, patience_counter = save_best_model(
             model, val_loss, best_val_loss, patience_counter, model_output
         )
-        if patience_counter >= patience:
+        if early_stopping and patience_counter >= patience:
             print("Early stopping triggered!")
             break
 
     # Load the best model after training
     model.load_state_dict(torch.load(model_output, weights_only=True))
     print("Best model loaded!")
+
+    save_metrics(train_losses, val_losses, val_accuracies, metrics_output)
 
     # Return training history for visualization
     return train_losses, val_losses, val_accuracies
