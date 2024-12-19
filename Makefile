@@ -7,6 +7,9 @@ requirements: pip
 install-dev: requirements-dev
 	.venv/bin/pre-commit install
 
+requirements-pytorch: pip
+	.venv/bin/python3 -m pip install -e .[pytorch]
+
 requirements-dev: pip
 	.venv/bin/python3 -m pip install -e .[dev]
 	.venv/bin/python3 -m nltk.downloader -d .venv/nltk_data popular

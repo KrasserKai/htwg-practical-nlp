@@ -22,6 +22,12 @@ dev = [
     "ruff~=0.7.0",
 ]
 
+pytorch = [
+    "torch",
+    "torchinfo",
+    "torchviz"
+]
+
 [tool.mypy]
 ignore_missing_imports = true
 
