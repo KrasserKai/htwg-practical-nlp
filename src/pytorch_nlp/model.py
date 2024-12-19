@@ -1,33 +1,6 @@
 import torch.nn as nn
 
 
-def build_vocab(tweets, processor):
-    """
-    Dynamically build a vocabulary from the dataset.
-
-    Args:
-        tweets (list of str): List of tweet strings.
-
-    Returns:
-        dict: Token-to-index mapping.
-    """
-    from collections import Counter
-
-    # Tokenize all tweets and count token frequencies
-    counter = Counter()
-    for tweet in tweets:
-        tokens = processor(tweet)
-        counter.update(tokens)
-
-    # Assign a unique index to each token, starting from 2
-    # Reserve 0 for <PAD> and 1 for <UNK>
-    vocab = {"<PAD>": 0, "<UNK>": 1}
-    for token in counter:
-        vocab[token] = len(vocab)
-
-    return vocab
-
-
 class SentimentModel(nn.Module):
     def __init__(self, vocab_size, embedding_dim):
         """

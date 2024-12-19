@@ -88,18 +88,20 @@ def evaluate_model(model, val_loader, criterion, device):
     return avg_val_loss, val_accuracy
 
 
-def save_best_model(model, val_loss, best_val_loss, patience_counter, model_output):
+def save_best_model(
+    model, val_accuracy, best_val_accuracy, patience_counter, model_output
+):
     """Check if the current validation loss is the best and save the model."""
-    if val_loss < best_val_loss:
+    if val_accuracy > best_val_accuracy:
         torch.save(model.state_dict(), model_output)
-        print("  Validation loss improved. Model saved!")
-        return val_loss, 0  # Reset patience counter
+        print("  Validation accuracy improved. Model saved!")
+        return val_accuracy, 0  # Reset patience counter
     else:
         patience_counter += 1
         print(
-            f"  No improvement in validation loss. Patience counter: {patience_counter}"
+            f"  No improvement in validation accuracy. Patience counter: {patience_counter}"
         )
-        return best_val_loss, patience_counter
+        return best_val_accuracy, patience_counter
 
 
 def train_model(
@@ -117,10 +119,9 @@ def train_model(
 ):
     """Train the model with early stopping and track training history."""
     model.to(device)
-    best_val_loss = float("inf")
+    best_val_accuracy = float(0)
     patience_counter = 0
 
-    # History lists to track metrics for later visualization
     train_losses = []
     val_losses = []
     val_accuracies = []
@@ -144,8 +145,8 @@ def train_model(
         print(f"  Val Acc:    {val_accuracy:.4f}")
 
         # Check for early stopping
-        best_val_loss, patience_counter = save_best_model(
-            model, val_loss, best_val_loss, patience_counter, model_output
+        best_val_accuracy, patience_counter = save_best_model(
+            model, val_accuracy, best_val_accuracy, patience_counter, model_output
         )
         if early_stopping and patience_counter >= patience:
             print("Early stopping triggered!")

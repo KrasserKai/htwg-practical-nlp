@@ -1,3 +1,5 @@
+from collections import Counter
+
 import torch
 from torch.utils.data import Dataset
 
@@ -30,7 +32,6 @@ class SentimentDataset(Dataset):
         Returns:
             dict: Token-to-index mapping.
         """
-        from collections import Counter
 
         # Tokenize all tweets and count token frequencies
         counter = Counter()
@@ -66,20 +67,3 @@ class SentimentDataset(Dataset):
         label_tensor = torch.tensor(label, dtype=torch.long)
 
         return input_ids, label_tensor
-
-    def ids_to_tokens(self, ids):
-        """
-        Converts a tensor of token IDs back into tokens using the dataset's vocabulary.
-
-        Args:
-            ids (torch.Tensor): Tensor containing token IDs.
-
-        Returns:
-            list: List of tokens corresponding to the IDs.
-        """
-        # Reverse the vocabulary: index -> token
-        id_to_token = {idx: token for token, idx in self.vocab.items()}
-
-        # Convert each ID to a token
-        tokens = [id_to_token.get(id.item(), "<UNK>") for id in ids]
-        return tokens
