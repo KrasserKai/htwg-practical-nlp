@@ -3,9 +3,9 @@ import csv
 import torch
 
 
-def save_metrics(train_losses, val_losses, val_accuracies, metrics_output):
+def save_metrics(train_losses, val_losses, val_accuracies, metrics_path):
     # Save metrics to a CSV file
-    with open(metrics_output, mode="w", newline="") as file:
+    with open(metrics_path, mode="w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["Epoch", "Train Loss", "Val Loss", "Val Accuracy"])
         for epoch, (train_loss, val_loss, val_accuracy) in enumerate(
@@ -13,17 +13,26 @@ def save_metrics(train_losses, val_losses, val_accuracies, metrics_output):
         ):
             writer.writerow([epoch, train_loss, val_loss, val_accuracy])
 
-    print(f"Metrics saved to {metrics_output}")
+    print(f"Metrics saved to {metrics_path}")
 
 
-def load_metrics(metrics_output):
+def load_model(model, model_path, device):
+    model.load_state_dict(
+        torch.load(model_path, weights_only=True, map_location=device)
+    )
+    print(f"Model loaded from {model_path}")
+
+    return model
+
+
+def load_metrics(metrics_path):
     # Load metrics from a CSV file
     epochs = []
     train_losses = []
     val_losses = []
     val_accuracies = []
 
-    with open(metrics_output, mode="r") as file:
+    with open(metrics_path, mode="r") as file:
         reader = csv.reader(file)
         next(reader)  # Skip the header row
         for row in reader:
@@ -32,7 +41,7 @@ def load_metrics(metrics_output):
             val_losses.append(float(row[2]))  # Validation Loss
             val_accuracies.append(float(row[3]))  # Validation Accuracy
 
-    print(f"Metrics loaded from {metrics_output}")
+    print(f"Metrics loaded from {metrics_path}")
 
     # Return the metrics as lists
     return epochs, train_losses, val_losses, val_accuracies
@@ -89,11 +98,11 @@ def evaluate_model(model, val_loader, criterion, device):
 
 
 def save_best_model(
-    model, val_accuracy, best_val_accuracy, patience_counter, model_output
+    model, val_accuracy, best_val_accuracy, patience_counter, model_path
 ):
     """Check if the current validation loss is the best and save the model."""
     if val_accuracy > best_val_accuracy:
-        torch.save(model.state_dict(), model_output)
+        torch.save(model.state_dict(), model_path)
         print("  Validation accuracy improved. Model saved!")
         return val_accuracy, 0  # Reset patience counter
     else:
@@ -126,8 +135,8 @@ def train_model(
     val_losses = []
     val_accuracies = []
 
-    model_output = f"{output}/{run_name}.pt"
-    metrics_output = f"{output}/{run_name}.csv"
+    model_path = f"{output}/{run_name}.pt"
+    metrics_path = f"{output}/{run_name}.csv"
 
     for epoch in range(num_epochs):
         print(f"Epoch [{epoch+1}/{num_epochs}]")
@@ -146,17 +155,17 @@ def train_model(
 
         # Check for early stopping
         best_val_accuracy, patience_counter = save_best_model(
-            model, val_accuracy, best_val_accuracy, patience_counter, model_output
+            model, val_accuracy, best_val_accuracy, patience_counter, model_path
         )
         if early_stopping and patience_counter >= patience:
             print("Early stopping triggered!")
             break
 
     # Load the best model after training
-    model.load_state_dict(torch.load(model_output, weights_only=True))
+    model = load_model(model, model_path, device)
     print("Best model loaded!")
 
-    save_metrics(train_losses, val_losses, val_accuracies, metrics_output)
+    save_metrics(train_losses, val_losses, val_accuracies, metrics_path)
 
     # Return training history for visualization
     return train_losses, val_losses, val_accuracies
