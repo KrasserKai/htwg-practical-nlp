@@ -10,7 +10,7 @@ Hints:
 """
 
 import pickle
-from typing import Optional
+from typing import Literal
 
 import numpy as np
 import pandas as pd
@@ -28,22 +28,21 @@ class WordEmbeddings:
 
     def __init__(self) -> None:
         """Initializes the WordEmbeddings class."""
-        self._embeddings: Optional[dict[str, np.ndarray]] = None
-        self._embeddings_df: Optional[pd.DataFrame] = None
+        # TODO ASSIGNMENT-4: implement this method
+        raise NotImplementedError("This method needs to be implemented.")
 
     @property
     def embedding_values(self) -> np.ndarray:
         """Returns the embedding values.
 
+        Raises:
+            ValueError: if the embeddings have not been loaded yet
+
         Returns:
             np.ndarray: the embedding values as a numpy array of shape (n, d), where n is the vocabulary size and d is the number of dimensions
         """
-        if self._embeddings_df is not None:
-            embedding_values = self._embeddings_df.values
-        else:
-            raise ValueError("Embeddings have not been initialized.")
-
-        return embedding_values
+        # TODO ASSIGNMENT-4: implement this method
+        raise NotImplementedError("This method needs to be implemented.")
 
     def _load_raw_embeddings(self, path: str) -> None:
         """Loads the raw embeddings from a pickle file, and stores them in the `_embeddings` attribute.
@@ -53,15 +52,16 @@ class WordEmbeddings:
         Args:
             path (str): the path to the pickle file
         """
-        with open(path, "rb") as file:
-            self._embeddings = pickle.load(file)
+        # TODO ASSIGNMENT-4: implement this method
+        raise NotImplementedError("This method needs to be implemented.")
 
     def _load_embeddings_to_dataframe(self) -> None:
         """Loads the embeddings from the `_embeddings` attribute to the `_embeddings_df` attribute.
 
         The `_embeddings_df` attribute is a pandas DataFrame, where the index is the vocabulary and the columns are the embedding dimensions.
         """
-        self._embeddings_df = pd.DataFrame(self._embeddings).T
+        # TODO ASSIGNMENT-4: implement this method
+        raise NotImplementedError("This method needs to be implemented.")
 
     def load_embeddings(self, path: str) -> None:
         """Loads the embeddings from a pickle file.
@@ -80,13 +80,14 @@ class WordEmbeddings:
         Args:
             word (str): the word to get the embedding vector for
 
+        Raises:
+            ValueError: if the embeddings have not been loaded yet
+
         Returns:
             np.ndarray | None: the embedding vector for the given word in the form of a numpy array of shape (d,), where d is the number of dimensions, or None if the word is not in the vocabulary
         """
-        if self._embeddings is None:
-            raise ValueError("Embeddings have not been initialized.")
-
-        return self._embeddings.get(word)
+        # TODO ASSIGNMENT-4: implement this method
+        raise NotImplementedError("This method needs to be implemented.")
 
     def euclidean_distance(self, v: np.ndarray) -> np.ndarray:
         """Returns the Euclidean distance between the given vector `v` and all the embedding vectors.
@@ -97,7 +98,8 @@ class WordEmbeddings:
         Returns:
             np.ndarray: the Euclidean distances between the given vector `v` and all the embedding vectors as a one-dimensional numpy array of shape (n,), where n is the vocabulary size
         """
-        return np.linalg.norm(self.embedding_values - v, axis=1)
+        # TODO ASSIGNMENT-4: implement this method
+        raise NotImplementedError("This method needs to be implemented.")
 
     def cosine_similarity(self, v: np.ndarray) -> np.ndarray:
         """Returns the cosine similarity between the given vector `v` and all the embedding vectors.
@@ -108,18 +110,14 @@ class WordEmbeddings:
         Returns:
             np.ndarray: the cosine similarities between the given vector `v` and all the embedding vectors as a one-dimensional numpy array of shape (n,), where n is the vocabulary size
         """
-        epsilon = 1e-15
-        dot_products = np.dot(self.embedding_values, v)
-
-        embedding_norms = np.linalg.norm(self.embedding_values, axis=1) + epsilon
-        v_norm = np.linalg.norm(v) + epsilon
-
-        cosine_similarities = dot_products / (embedding_norms * v_norm)
-
-        return cosine_similarities
+        # TODO ASSIGNMENT-4: implement this method
+        raise NotImplementedError("This method needs to be implemented.")
 
     def get_most_similar_words(
-        self, word: str, n: int = 5, metric: str = "euclidean"
+        self,
+        word: str,
+        n: int = 5,
+        metric: Literal["euclidean", "cosine"] = "euclidean",
     ) -> list[str]:
         """Returns the `n` most similar words to the given word.
 
@@ -130,72 +128,36 @@ class WordEmbeddings:
         Args:
             word (str): the word to get the most similar words for
             n (int, optional): the number of most similar words to return. Defaults to 5.
-            metric (str, optional): the metric to use for computing the similarity. Defaults to "euclidean".
+            metric (Literal["euclidean", "cosine"], optional): the metric to use for computing the similarity. Defaults to "euclidean".
 
         Raises:
+            ValueError: if the embeddings have not been loaded yet
             ValueError: if the metric is not "euclidean" or "cosine"
             AssertionError: if the word is not in the vocabulary
 
         Returns:
             list[str]: the `n` most similar words to the given word
         """
-        if self._embeddings is None:
-            raise ValueError("Embeddings have not been initialized.")
+        # TODO ASSIGNMENT-4: implement this method
+        raise NotImplementedError("This method needs to be implemented.")
 
-        if self._embeddings_df is None:
-            raise ValueError("Embeddings have not been loaded to DataFrame.")
-
-        if word not in self._embeddings:
-            raise AssertionError(f"The word '{word}' is not in the vocabulary.")
-
-        v = self.get_embeddings(word)
-
-        if metric == "euclidean":
-            # Compute Euclidean distances
-            distances = self.euclidean_distance(v)
-            most_similar_indices = np.argsort(distances)[1 : n + 1]
-        elif metric == "cosine":
-            similarities = self.cosine_similarity(v)
-            most_similar_indices = np.argsort(similarities)[::-1][1 : n + 1]
-        else:
-            raise ValueError(f"Invalid metric: {metric}. Use 'euclidean' or 'cosine'.")
-
-        most_similar_words = self._embeddings_df.iloc[
-            most_similar_indices
-        ].index.tolist()
-
-        return most_similar_words
-
-    def find_closest_word(self, v: np.ndarray, metric: str = "euclidean") -> str:
+    def find_closest_word(
+        self, v: np.ndarray, metric: Literal["euclidean", "cosine"] = "euclidean"
+    ) -> str:
         """Returns the word that is closest to the given vector `v`.
 
         The similarity is computed using the Euclidean distance or the cosine similarity.
 
         Args:
             v (np.ndarray): the vector to find the closest word for
-            metric (str, optional): the metric to use for computing the similarity. Defaults to "euclidean".
+            metric (Literal["euclidean", "cosine"], optional): the metric to use for computing the similarity. Defaults to "euclidean".
 
         Raises:
+            ValueError: if the embeddings have not been loaded yet
             ValueError: if the metric is not "euclidean" or "cosine"
 
         Returns:
             str: the word that is closest to the given vector `v`
         """
-        if self._embeddings is None:
-            raise ValueError("Embeddings have not been initialized.")
-
-        if self._embeddings_df is None:
-            raise ValueError("Embeddings have not been loaded to DataFrame.")
-
-        if metric == "euclidean":
-            distances = self.euclidean_distance(v)
-            closest_word_index = np.argmin(distances)
-        elif metric == "cosine":
-            similarities = self.cosine_similarity(v)
-            closest_word_index = np.argmax(similarities)
-        else:
-            raise ValueError(f"Invalid metric: {metric}")
-
-        closest_word = self._embeddings_df.index[closest_word_index]
-
-        return closest_word
+        # TODO ASSIGNMENT-4: implement this method
+        raise NotImplementedError("This method needs to be implemented.")

@@ -6,6 +6,7 @@ This module contains the CountVectorizer class for NLP tasks.
 from collections import defaultdict
 
 import numpy as np
+import numpy.typing as npt
 
 
 class CountVectorizer:
@@ -30,12 +31,13 @@ class CountVectorizer:
         self.word_frequencies = defaultdict(int)
 
     def build_word_frequencies(
-        self, tweets: list[list[str]], labels: np.ndarray
+        self, tweets: list[list[str]], labels: npt.NDArray[np.int_]
     ) -> None:
         """Builds a dictionary of word frequencies by counting the number of occurrences of each word in each class.
 
         The key is a tuple of the word and the class, the value is the frequency of the word in the class.
         For example, the key ('happi', 1) refers to the word 'happi' in the positive class,
+        while ('happi', 0) refers to 'happi' in the negative class,
         and the value it holds is the number of times the word 'happi' occurs in the positive class.
 
         Example:
@@ -46,8 +48,7 @@ class CountVectorizer:
 
         Args:
             tweets (list[list[str]]): a list of tokenized tweets
-            labels (list[str]): a list of corresponding class labels
-
+            labels (npt.NDArray[np.int_]): a column vector of corresponding class labels , e.g. `np.array([[1], [0], [1], [0]]`)
         """
         for tweet, label in zip(tweets, labels):
             for word in tweet:

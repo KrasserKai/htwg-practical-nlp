@@ -34,7 +34,7 @@ $$
 
 !!! note
 
-    For **binary classification**, if there a tweet can only be either positive or negative, then the probability of a tweet being negative is $1-P(A)$.
+    For **binary classification**, if a tweet can only be either positive or negative, then the probability of a tweet being negative is $1-P(A)$.
 
 !!! example
 
@@ -96,38 +96,35 @@ Looking at the diagram from above, this means we only consider the **blue circle
 
 In our example, this is the **probability of the intersection** of the tweets being positive and containing the word "amazing" divided by the probability of all tweets containing the word "amazing".
 
-This is called the **conditional probability** $P(A|B)$ of a tweet being positive, given that it contains the word "amazing".
+This is called the **conditional probability** of a tweet being positive, _given that_ it contains the word "amazing".
 
-It is calculated as follows:
-
-$$
-P(A|B) = \frac{P(A \cap B)}{P(B)}
-$$
-
+<!-- TODO EXAM -->
 !!! quote "Conditional Probability"
 
-    The conditional probability $P(A|B)$ is the probability of event $A$ _given that_ event $B$ has occurred.
+    Generally speaking, the **conditional probability** $P(A|B)$ is the probability of event $A$ _given that_ event $B$ has already occurred.
 
-    For example, $P(\text{positive}|\text{happy})$ is the probability of a tweet being positive, given that it contains the word "happy".
+    It is calculated as the probability of **both events occuring** divided by the probability of the event that **has already occurred**:
+
+    $$
+    P(A|B) = \frac{P(A \cap B)}{P(B)}
+    $$
 
 !!! example
 
     Let's continue the example from above, where we have 5 tweets containing the word "amazing" and 4 of them are positive.
 
-    Then the probability $P(A|B)$ of a tweet being positive, given that it contains the word "amazing" is calculated as
+    Then the probability $P(positive|amazing)$ of a tweet being positive, given that it contains the word "amazing" is calculated as
 
     $$
-    P(A|B) = \frac{P(A \cap B)}{P(B)} = \frac{4/100}{5/100} = \frac{4}{5} = 0.8
+    P(positive|amazing) = \frac{P(positive \cap amazing)}{P(amazing)} = \frac{4/100}{5/100} = \frac{4}{5} = 0.8
     $$
-
-!!! example
 
     Now let's turn it around and calculate the probability of a tweet containing the word "amazing", given that it is positive.
 
     This is calculated as follows:
 
     $$
-    P(B|A) = \frac{P(A \cap B)}{P(A)} = \frac{4/100}{35/100} = \frac{4}{35} = 0.1143
+    P(amazing|positive) = \frac{P(positive \cap amazing)}{P(positive)} = \frac{4/100}{35/100} = \frac{4}{35} = 0.1143
     $$
 
 ## Bayes Rule
@@ -146,13 +143,19 @@ $$
 P(B|A) = \frac{P(B \cap A)}{P(A)}
 $$
 
+We can rewrite this as:
+
+$$
+P(B \cap A) = P(B|A)P(A)
+$$
+
 Given that
 
 $$
 P(A \cap B) = P(B \cap A)
 $$
 
-we can rewrite the equation as follows:
+we can plug in the previous equation and get:
 
 $$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
@@ -170,6 +173,9 @@ With that, we have **derived Bayes Rule**.
     P(A|B) = \frac{P(B|A)P(A)}{P(B)}
     $$
 
+    In other words: _Out of all the times $B$ happens, what fraction are due to $A$?_
+
+<!-- TODO EXAM -->
 !!! example
 
     Suppose that in your dataset, 25% of the positive tweets contain the word "amazing".
@@ -217,7 +223,7 @@ $$
 P(w|c) = \frac{P(c|w)P(w)}{P(c)} = \frac{freq(w,c)}{N_c}
 $$
 
-However, if a word has not been seen in the training data, then $freq(w,c) = 0$ and thus, $P(w|c) = 0$.
+However, for OOV words, if a word has not been seen in the training data, then $freq(w,c) = 0$ and thus, $P(w|c) = 0$.
 
 To account for this, we can use Laplacian Smoothing (aka Additive Smoothing).
 
@@ -541,7 +547,12 @@ Of course, we need to apply the desired preprocessing steps before the training.
 
 ## Prediction
 
-To predict a tweet using the Naive Bayes classifier for binary classification, we need to apply the likelihood formula to the tweet, and check if the log likelihood is greater than 0.
+To predict a tweet using the Naive Bayes classifier for binary classification, we need to apply the likelihood formula to the tweet, and check _if the log likelihood is greater than 0_.
+
+<!-- TODO EXAM -->
+!!! note
+
+    Note that for the log likelihood, we need to check if the value is greater than 0, because we are working with logarithms.
 
 $$
 \log \frac{P(pos)}{P(neg)} + \sum_{i=1}^{m} \log \frac{P(w_i|pos)}{P(w_i|neg)} > 0
@@ -549,7 +560,7 @@ $$
 
 So for every word in the tweet, we look up the log ratio of probabilities in our likelihood table and sum them up. Then we add the log prior ratio to the sum.
 
-Words that **do not appear** in the vocabulary are **ignored**. They are considered neutral and do not contribute to the log likelihood, as the model can only give a score for words that it has seen in the training data.
+OOV Words are **ignored**. They are considered neutral and do not contribute to the log likelihood, as the model can only give a score for words that it has seen in the training data.
 
 ![Naive Bayes Prediction](../img/naive-bayes-prediction.drawio.svg)
 

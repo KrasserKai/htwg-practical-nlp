@@ -3,11 +3,13 @@
 Natural language data is inherently **unstructured** and often contains noise, irregularities, and inconsistencies.
 
 Machine learning models **cannot process raw text directly**.
-Since text is categorical, it isn’t compatible with the mathematical operations used to implement and train neural networks. Therefore, we need a way to represent words as continuous-valued vectors (aka [embeddings](http://127.0.0.1:8000/lectures/word_embeddings/)).[^1]
+Since text is categorical, it isn’t compatible with the mathematical operations used to implement and train neural networks. Therefore, we need a way to represent words as continuous-valued vectors (aka [embeddings](https://pkeilbach.github.io/htwg-practical-nlp/lectures/word_embeddings/)).[^1]
 
 !!! info "Embeddings"
 
-    As we will learn [later](http://127.0.0.1:8000/lectures/word_embeddings/), embeddings are a numerical representation of a token.
+    As we will learn [later](https://pkeilbach.github.io/htwg-practical-nlp/lectures/word_embeddings/), embeddings are a numerical representation of a token.
+    In the beginning, we initialize them **randomly**.
+    Later, during training, they are optimized to represent the token in a way that is useful for the task at hand.
 
 The **goal** of preprocessing is to transform raw text data into such embeddings so that we can use them for training machine learning models.
 
@@ -23,12 +25,7 @@ The image shows the typical preprocessing steps of text data:[^1]
 - Afterwards, the each individual token is **mapped to an ID**.
 - Then, we convert the token IDs into **embedding vectors**.
 
-!!! info "Embeddings"
-
-    As we will learn later, embeddings are a numerical representation of a token.
-    In the beginning, we initialize them **randomly**.
-    Later, during training, they are optimized to represent the token in a way that is useful for the task at hand.
-
+<!-- TODO EXAM -->
 ## The pipeline concept in NLP
 
 Like with many other complex problems, in NLP, it makes sense to break the problem that needs to be solved down into several sub-problems.
@@ -196,7 +193,7 @@ else:
 
 !!! example
 
-    The `data_acquisition.ipynb` notebook in the demonstrates how to acquire data from New York Times articles using the [New York Times API](https://developer.nytimes.com/apis).
+    The [`data_acquisition.ipynb`](https://github.com/pkeilbach/htwg-practical-nlp/blob/main/notebooks/data_acquisition.ipynb) notebook demonstrates how to acquire data from New York Times articles using the [New York Times API](https://developer.nytimes.com/apis).
 
 ## Working with text data
 
@@ -345,6 +342,7 @@ Stopwords are common words (such as "and," "the," "is," etc.) that don't carry s
 Stopword removal involves filtering out these words from a text to reduce noise and save processing time.
 The goal is to focus on the more meaningful content words that contribute to the overall context of the text.
 
+<!-- TODO EXAM -->
 ```python
 >>> from nltk.tokenize import word_tokenize
 >>> from nltk.corpus import stopwords
@@ -379,7 +377,7 @@ Stemming can be computationally faster than lemmatization since it involves simp
 ### Lemmatization
 
 Lemmatization is a more advanced technique that reduces words to their base form, known as the lemma.
-Unlike stemming, lemmatization takes into account the word's morphological analysis and its part of speech (POS) to ensure that the resulting lemma is **a valid word** in the language.
+Unlike stemming, lemmatization takes into account the word's morphological analysis and its POS to ensure that the resulting lemma is **a valid word** in the language.
 This makes lemmatization more accurate but potentially slower than stemming.
 
 ```python

@@ -1,12 +1,18 @@
 # Introduction to Natural Language Processing
 
-The first lecture will give you a basic understanding of what NLP is about, the problems we deal with and the challenges that come with it.
+The first lecture will give you a basic understanding of what Natural Language Processing (NLP) is about, the problems we deal with and the challenges that come with it.
 The goal is to get a good intuition of what it means to work with language from a programmatic perspective.
+
+!!! quote "Natural Language Processing"
+
+    Natural Language Processing (NLP) is a branch of artificial intelligence (AI) that focuses on enabling computers to understand, interpret, and generate human language.
+    By combining computational linguistics with machine learning and deep learning, NLP allows machines to process and analyze vast amounts of natural language data.
+    This capability is fundamental for applications such as speech recognition, text analysis, and language translation.[^1]
 
 ## NLP in our everyday lives
 
 In our daily digital lives, we interact with a lot of apps and tools that are based on NLP technologies.
-The following figure gives an overview of real-world NLP applications along with popular examples[^1].
+The following figure gives an overview of real-world NLP applications along with popular examples[^2].
 
 ![An overview of real-world NLP applications with popular examples](../img/nlp-real-world-applications.drawio.svg "Real-world NLP applications")
 
@@ -26,7 +32,7 @@ The following figure gives an overview of real-world NLP applications along with
 
 ## A brief history about NLP
 
-IMHO, every lecture should provide a little historical background in the beginning[^2]: 📜
+IMHO, every lecture should provide a little historical background in the beginning[^3]: 📜
 
 - **1950s–1990s**
   Initial attempts are made to map hard rules around languages and follow logical steps to accomplish tasks like translating a sentence from one language to another.
@@ -44,7 +50,7 @@ IMHO, every lecture should provide a little historical background in the beginni
 
     !!! info "Geoffrey Hinton"
 
-        Often referred to as one of the "Godfathers of Deep Learning," [Geoffrey Hinton](https://en.wikipedia.org/wiki/Geoffrey_Hinton) has made significant contributions to the field of neural networks and deep learning, which are foundational to modern language models. His work on backpropagation, neural networks, and the development of the dropout technique has greatly influenced the training of deep learning models. Hinton's research laid the groundwork for the advancement of architectures like BERT and GPT, significantly impacting natural language processing (NLP) and machine learning as a whole.
+        Often referred to as one of the "Godfathers of Deep Learning," [Geoffrey Hinton](https://en.wikipedia.org/wiki/Geoffrey_Hinton) has made significant contributions to the field of neural networks and deep learning, which are foundational to modern language models. His work on backpropagation, neural networks, and the development of the dropout technique has greatly influenced the training of deep learning models. Hinton's research laid the groundwork for the advancement of architectures like BERT and GPT, significantly impacting NLP and machine learning as a whole.
 
         Together with [John Hopfield](https://en.wikipedia.org/wiki/John_Hopfield), he was awarded the 2024 Nobel Prize in Physics.
 
@@ -69,11 +75,13 @@ IMHO, every lecture should provide a little historical background in the beginni
 
 ## Tasks that can be solved by NLP
 
+<!-- TODO EXAM -->
+
 NLP is used for a wide variety of language-related tasks, including answering questions, classifying text in a variety of ways, and conversing with users.
 
 If you design an NLP system, you may make use of multiple tasks.
 
-Here are some tasks that can be solved by NLP[^3]:
+Here are some tasks that can be solved by NLP[^4]:
 
 ### Sentiment analysis
 
@@ -122,7 +130,7 @@ Here are some tasks that can be solved by NLP[^3]:
 
 !!! example
 
-    The [spaCy library](https://spacy.io/) is an open-source Python library for advanced Natural Language Processing that provides efficient tools for tasks such as tokenization, part of speech tagging, NER, and dependency parsing.
+    The [spaCy library](https://spacy.io/) is an open-source Python library for advanced Natural Language Processing that provides efficient tools for tasks such as tokenization, POS tagging, NER, and dependency parsing.
 
     Here is an [example](https://spacy.io/usage/linguistic-features#named-entities) of NER with spaCy
 
@@ -146,10 +154,10 @@ Here are some tasks that can be solved by NLP[^3]:
 
     ![NER with spaCy](../img/intro-ner.png)
 
-### Part-of-speech tagging
+### Part-of-speech (POS) tagging
 
-- In NLP, the **anatomy** of a sentence is commonly described using **part-of-speech (POS) tags**, which involves assigning **grammatical categories** (e.g., noun, verb, adjective) to each word in the sentence.
-- The **input** is a sequence of words, and the **output** is a tagged sequence indicating the part of speech for each word.
+- In NLP, the **anatomy** of a sentence is commonly described using **POS tags**, which involves assigning **grammatical categories** (e.g., noun, verb, adjective) to each word in the sentence.
+- The **input** is a sequence of words, and the **output** is a tagged sequence indicating the POS for each word.
 - POS tagging is essential for various NLP tasks, such as syntactic parsing, machine translation, and information retrieval.
 
 !!! example "POS-tagging with the Python spaCy library"
@@ -171,7 +179,7 @@ Here are some tasks that can be solved by NLP[^3]:
 
 !!! info "POS-tagsets"
 
-    A tagset is a predefined list of grammatical categories used in Natural Language Processing to classify words during tasks like part of speech tagging.
+    A tagset is a predefined list of grammatical categories used in Natural Language Processing to classify words during tasks like POS tagging.
 
     A popular tagging convention is [Penn Treebank tagset](https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html) which is also used by default by the Python [Natural Language Toolkit library](https://www.nltk.org/api/nltk.tag.html).
 
@@ -310,6 +318,7 @@ Important for:
 - POS-tagging
 - Word embeddings
 
+<!-- TODO EXAM -->
 !!! example "Examples"
 
     Breaking down a word into its morphemes:
@@ -342,7 +351,7 @@ Important for:
 - Layer of **phrases and sentences**
 - Set of rules to construct grammatically correct sentences out of words
 - The syntactic structure can be described in many different ways, e.g. grammar
-- In NLP, it is common to describe the anatomy of a sentence using part-of-speech (POS) tags
+- In NLP, it is common to describe the anatomy of a sentence using POS tags
 
 The following snippet shows POS-tagging in Python using the NLTK library and the [universal tagset](https://github.com/slavpetrov/universal-pos-tags):
 
@@ -414,6 +423,8 @@ Important for:
     Being a linguistic expert is not necessary to master NLP, but by understanding the basic building blocks of language, we can use the right NLP tools in real-world projects.
 
 ## Challenges in NLP
+
+<!-- TODO EXAM -->
 
 ### Ambiguity
 
@@ -656,7 +667,7 @@ This section gives a brief overview of the terms that are used in this context.
 ### Limitations of AI in NLP
 
 DL has brought NLP to the next level, and powerful transformer models have become SOTA in most NLP tasks.
-However, DL is not the silver bullet for all NLP tasks, especially when it comes to industrial applications[^1]:
+However, DL is not the silver bullet for all NLP tasks, especially when it comes to industrial applications[^2]:
 
 - **Overfitting on small datasets**:
   DL models need more training data to fit all their parameters, but many times, sufficient training data is not available.
@@ -744,6 +755,8 @@ However, DL is not the silver bullet for all NLP tasks, especially when it comes
 - Recent advancement in NLP is mainly driven by **deep learning** and **transformer models** and their ability to learn from large amounts of data. This is the beginning of a new era in NLP.
 
 <!-- footnotes -->
-[^1]: Vajjala, Sowmya, S.V. Bharathi, Bodhisattwa Majumder, Anuj Gupta, and Harshit Surana. *Practical Natural Language Processing: A Comprehensive Guide to Building Real-world NLP Systems*. Sebastopol, CA: O'Reilly Media, 2020. <https://www.practicalnlp.ai/>.
-[^2]: <https://www.databricks.com/sites/default/files/2023-06/compact-guide-to-large-language-models.pdf>
-[^3]: <https://www.deeplearning.ai/resources/natural-language-processing/>
+<!-- markdownlint-disable MD053 -->
+[^1]: <https://www.ibm.com/think/topics/natural-language-processing>
+[^2]: Vajjala, Sowmya, S.V. Bharathi, Bodhisattwa Majumder, Anuj Gupta, and Harshit Surana. *Practical Natural Language Processing: A Comprehensive Guide to Building Real-world NLP Systems*. Sebastopol, CA: O'Reilly Media, 2020. <https://www.practicalnlp.ai/>.
+[^3]: <https://www.databricks.com/sites/default/files/2023-06/compact-guide-to-large-language-models.pdf>
+[^4]: <https://www.deeplearning.ai/resources/natural-language-processing/>
